@@ -4,7 +4,16 @@ import os
 import sys
 import re
 import time
+import bintype
 
+
+def getfilename(**commandCtl):
+    try:
+        viewfilename = commandCtl
+    except IndexError:
+        viewfilename = input('Enter file name: ')
+
+    return viewfilename
 
 def splitInput(myinput):
     words = []
@@ -38,11 +47,12 @@ def command(commandCtl):
             f = open(myfilename,'x')
         except FileExistsError:
             print('That file already exists you doughnut.')
-    if commandCtl[0] + commandCtl[1] == 'editfile':
+    if commandCtl[0] + commandCtl[1] == 'editfile':  
         try:
-            editfilename = commandCtl[2]
+            editfilename = commandCtl
         except IndexError:
             editfilename = input('Enter file name: ')
+
         try:
             f = open(editfilename, 'w')
             print()
@@ -60,10 +70,10 @@ def command(commandCtl):
             print('That file doesn\'t exist you egg')
     if commandCtl[0] + commandCtl[1] == 'viewfile':
         try:
-            viewfilename = commandCtl[2]
+            viewfilename = commandCtl
         except IndexError:
             viewfilename = input('Enter file name: ')
-            
+
         try:
             f = open(viewfilename, 'r')
             ledata = os.path.getatime(currentPath + '\\' + viewfilename)
@@ -76,6 +86,27 @@ def command(commandCtl):
             print('You going to give me a file to read or...?')
     if commandCtl[0] + commandCtl[1] == 'binfile':
         print()
+    if commandCtl[0] + commandCtl[1]== 'encodestr':
+        try:
+            encodefilename = commandCtl[2]
+        except IndexError:
+            encodefilename = input('Enter file name: ')
+
+        f = open(encodefilename, 'wb')
+        print()
+        print('File : ' + encodefilename)
+        print('To stop writing to a file type stopgog')
+        tempstring = ''
+        while True:
+            stoptext = input(' > ')
+            if stoptext == 'stopgog':
+                break
+            else:
+                tempstring = tempstring + stoptext + '\n'
+        tempstring = bintype.encode(tempstring)
+        bintype.writeToFile(tempstring, encodefilename)
+
+            
 
 
 print('BC SYSTEM CMD - INGANUS SOFTWARE')
@@ -95,6 +126,7 @@ while not myquit:
         cmdcommand = ''
         for i in range(1,len(commands)):
             cmdcommand = cmdcommand + commands[i]
+            cmdcommand += ' '
         os.system(cmdcommand)
     elif myinput == '':
         print('\n')
@@ -102,6 +134,14 @@ while not myquit:
         command(commands)
 
 
+
+
+
+
+#--------------------------------------------
+# Useful Links:
+# http://www.blog.pythonlibrary.org/2013/11/14/python-101-how-to-write-a-cleanup-script/
+# https://pythontips.com/2014/01/23/python-101-writing-a-cleanup-script/
 
 
 
