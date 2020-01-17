@@ -2,6 +2,9 @@ import sys
 import re
 # from decimal import *
 
+# a few issues that i remember, from file encode to file decode the spaces at the end mess some things up. this is crutial if i want to send encoded files
+# over the internet 
+# next is to turn this into a api to use.
 
 class bbyte():
     def __init__(self, number, **letter):
@@ -65,8 +68,10 @@ class bbyte():
 def encode(sentence, progress):
     # add spaces so it can easily scramble the bits
 
+    # counter = 0
     while len(sentence)%8 != 0:
         sentence = sentence + ' '
+        # counter = counter + 1
     outputbin = [None] * len(sentence)
     tempbin = [None] * len(sentence)
 
@@ -91,6 +96,9 @@ def encode(sentence, progress):
 
             tempbin[i] = bbyte(0)
             tempbin[i].newNumbin(tempstr)
+
+    if progress:
+        print()
     return tempbin
 
 
@@ -121,18 +129,28 @@ def decode(sentence, progress):
             outputbin[i].newNumbin(tempstring)
             # print('i : ' + str(i+(8*repeat)) +'   repeat: '+ str(repeat) +  '      ' + str(outputbin[i].toletter()))
     counter = 100
-    sys.stdout.write("\r%d%% ==> Decoding Progress" % counter)
-    sys.stdout.flush()
+    if progress:
+        print()
+        sys.stdout.write("\r%d%% ==> Decoding Progress" % 100)
+        sys.stdout.flush()
+
     return outputbin
             
     
 
-def fileencode(filename):
-    print()
+def fileencode(filename, newFilename):
+    # All inclusive way to encode a file and write it to a new one all using functions in this file
+    target = getFromFile(filename, True)
+    tempstr = encode(viewChr(target), True)
+    writeToFile(tempstr,newFilename,True)
 
 
+def filedecode(filename, newFilename):
+    # smilar to fileencode just fliped
+    target = getFromFile(filename, True)
+    tempstr = decode(viewChr(target), True)
+    writeToFile(tempstr, newFilename,True)
 
-    
 def writeToFile(inbbyte, filename, progress):
     if progress:
         counterstep = 100/(len(inbbyte))
@@ -148,6 +166,8 @@ def writeToFile(inbbyte, filename, progress):
 
         f.write(inbbyte[i].tohex())
     f.close()
+    if progress:
+        print()
 
 def getFromFile(filename, progress):
     
@@ -166,6 +186,9 @@ def getFromFile(filename, progress):
                 sys.stdout.write("\r%d%% ==> Reading File Progress" % counter)
                 sys.stdout.flush()
         returnbyte[i] = bbyte(tempbyte[i])
+    
+    if progress:
+        print()
     return returnbyte
 
 def getFromFileStr(filename):
